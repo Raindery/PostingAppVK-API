@@ -14,7 +14,7 @@ namespace PostingAppVK_API
         private const string USER_DATA_DIRECTORY_NAME = "UserData";
         private const string USER_DATA_FILE_NAME = "UserData.json";
 
-        private static Dictionary<string, string> _data;
+        private static Dictionary<string, string> _userData = new Dictionary<string, string>();
         public static string UserDataDirectoryPath
         {
             get { return Path.Combine(Application.LocalUserAppDataPath, USER_DATA_DIRECTORY_NAME); }
@@ -23,16 +23,6 @@ namespace PostingAppVK_API
         public static string UserDataFilePath
         {
             get { return Path.Combine(Application.LocalUserAppDataPath, UserDataDirectoryPath, USER_DATA_FILE_NAME); }
-        }
-
-        public static Dictionary<string, string> Data
-        {
-            get
-            {
-                if (_data == null)
-                    UpdateUserData();
-                return _data;       
-            }
         }
 
 
@@ -50,13 +40,38 @@ namespace PostingAppVK_API
                 File.Create(UserDataFilePath).Close();
         }
 
+        public static Dictionary<string, string> GetUserData()
+        {
+            return _userData;
+        }
+
+        public static string GetUserDataFieldValue(string name)
+        {
+            string value;
+            if (_userData.TryGetValue(name, out value))
+                return value;
+
+            return string.Empty;
+        }
+
+        public static void AddUserDataField(string name, string value)
+        {
+            string currentValue;
+            if(_userData.TryGetValue(name, out currentValue))
+            {
+                if (currentValue.Equals(value))
+                    return;
+            }
+
+            _userData[name] = value;
+        }
         
-        public static void SaveUserDataInFile(Dictionary<string, string> userData)
+        public static void SaveUserData()
         {
             if (!DataFileExsist())
                 return;
 
-            string content = JsonConvert.SerializeObject(userData);
+            string content = JsonConvert.SerializeObject(_userData);
 
             File.WriteAllText(UserDataFilePath, content);
         }
@@ -68,7 +83,9 @@ namespace PostingAppVK_API
 
             string userDataString = File.ReadAllText(UserDataFilePath);
 
-            _data = JsonConvert.DeserializeObject<Dictionary<string, string>>(userDataString);
+            _userData = JsonConvert.DeserializeObject<Dictionary<string, string>>(userDataString);
+            if (_userData == null)
+                _userData = new Dictionary<string, string>();
         }
     }
 }
