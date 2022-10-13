@@ -17,8 +17,8 @@ namespace Views
 
             var vkApiConfig = new VkApiConfig(
                 vkApiUrl: "https://api.vk.com/method/",
-                appId: "51425700",
-                appSecret: "1c3d7b881c3d7b881c3d7b88531f2dca2c11c3d1c3d7b887f1da23715403543c24ad5cd",
+                appId: "APP_ID_VALUE",
+                appSecret: "APP_SECRET_VALUE",
                 apiVersion: "5.131"
             );
 
